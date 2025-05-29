@@ -81,7 +81,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return token;
         }
 
-        if(Date.now() > token.data.validity.refresh_until*1000){
+        if(Date.now() < token.data.validity.refresh_until*1000){
           console.log("Access token is being refreshed => Sending another one")
           try {
             const res = await fetch(`${BASE_URL}/api/token/refresh`, {
