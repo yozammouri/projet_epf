@@ -41,6 +41,15 @@ class ActiviteEnseignement
      * @var Collection<int, Intervenant>
      */
     #[ORM\ManyToMany(targetEntity: Intervenant::class, inversedBy: 'activiteEnseignements')]
+    #[ORM\JoinTable(
+    name: 'activite_enseignement_intervenant',
+    joinColumns: [
+        new ORM\JoinColumn(name: 'activite_enseignement_id', referencedColumnName: 'id')
+    ],
+    inverseJoinColumns: [
+        new ORM\JoinColumn(name: 'intervenant_id', referencedColumnName: 'id_intervenant')
+    ]
+    )]
     private Collection $intervenants;
 
     public function __construct()

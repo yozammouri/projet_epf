@@ -9,18 +9,18 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ApprenantRepository::class)]
-class Apprenant
+class Apprenant // extends User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id_apprenant = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
@@ -28,11 +28,11 @@ class Apprenant
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $date_naissance = null;
 
-    #[ORM\Column]
-    private ?int $tel = null;
+    #[ORM\Column(length: 20)]
+    private ?string $tel = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $sexe = null;
@@ -52,12 +52,26 @@ class Apprenant
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
 
+    #[ORM\OneToOne(inversedBy: "apprenant", cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
+
     /**
      * @var Collection<int, Session>
      */
     #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'apprenants')]
+    #[ORM\JoinTable(
+    name: 'apprenant_session',
+    joinColumns: [
+        new ORM\JoinColumn(name: 'apprenant_id', referencedColumnName: 'id_apprenant')
+    ],
+    inverseJoinColumns: [
+        new ORM\JoinColumn(name: 'session_id', referencedColumnName: 'id')
+    ]
+    )]
     private Collection $sessions;
 
+    
     public function __construct()
     {
         $this->sessions = new ArrayCollection();
@@ -65,39 +79,39 @@ class Apprenant
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id_apprenant;
     }
 
-    public function setId(int $id): static
+    public function setId(int $id_apprenant): static
     {
-        $this->id = $id;
+        $this->id_apprenant = $id_apprenant;
 
         return $this;
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
+    // public function getNom(): ?string
+    // {
+    //     return $this->nom;
+    // }
 
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
+    // public function setNom(string $nom): static
+    // {
+    //     $this->nom = $nom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
+    // public function getPrenom(): ?string
+    // {
+    //     return $this->prenom;
+    // }
 
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
+    // public function setPrenom(string $prenom): static
+    // {
+    //     $this->prenom = $prenom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getAdresse(): ?string
     {
@@ -123,29 +137,29 @@ class Apprenant
         return $this;
     }
 
-    public function getTel(): ?int
+    public function getTel(): ?string
     {
         return $this->tel;
     }
 
-    public function setTel(int $tel): static
+    public function setTel(string $tel): static
     {
         $this->tel = $tel;
 
         return $this;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
+    // public function getEmail(): ?string
+    // {
+    //     return $this->email;
+    // }
 
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
+    // public function setEmail(string $email): static
+    // {
+    //     $this->email = $email;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getSexe(): ?string
     {
@@ -218,6 +232,18 @@ class Apprenant
 
         return $this;
     }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, Session>
