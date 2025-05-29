@@ -8,18 +8,18 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CoordinateurRepository::class)]
-class Coordinateur
+class Coordinateur // extends User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id_coordinateur = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
@@ -33,16 +33,36 @@ class Coordinateur
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
 
+    #[ORM\OneToOne(inversedBy: "coordinateur", cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
+
     /**
      * @var Collection<int, Formation>
      */
     #[ORM\ManyToMany(targetEntity: Formation::class, inversedBy: 'coordinateurs')]
+    #[ORM\JoinTable(name: "coordinateur_formation",
+    joinColumns: [
+        new ORM\JoinColumn(name: "coordinateur_id", referencedColumnName: "id_coordinateur")
+    ],
+    inverseJoinColumns: [
+        new ORM\JoinColumn(name: "formation_id", referencedColumnName: "id")
+    ]
+    )]
     private Collection $formations;
 
     /**
      * @var Collection<int, Syllabus>
      */
     #[ORM\ManyToMany(targetEntity: Syllabus::class, inversedBy: 'coordinateurs')]
+    #[ORM\JoinTable(name: "coordinateur_syllabus",
+        joinColumns: [
+            new ORM\JoinColumn(name: "coordinateur_id", referencedColumnName: "id_coordinateur")
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(name: "syllabus_id", referencedColumnName: "id")
+        ]
+    )]
     private Collection $syllabuss;
 
     public function __construct()
@@ -53,39 +73,39 @@ class Coordinateur
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->id_coordinateur;
     }
 
-    public function setId(int $id): static
+    public function setId(int $id_coordinateur): static
     {
-        $this->id = $id;
+        $this->id_coordinateur = $id_coordinateur;
 
         return $this;
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
+    // public function getNom(): ?string
+    // {
+    //     return $this->nom;
+    // }
 
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
+    // public function setNom(string $nom): static
+    // {
+    //     $this->nom = $nom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
+    // public function getPrenom(): ?string
+    // {
+    //     return $this->prenom;
+    // }
 
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
+    // public function setPrenom(string $prenom): static
+    // {
+    //     $this->prenom = $prenom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getAdresse(): ?string
     {
@@ -135,6 +155,18 @@ class Coordinateur
         return $this;
     }
 
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+
     /**
      * @return Collection<int, Formation>
      */
@@ -182,4 +214,6 @@ class Coordinateur
 
         return $this;
     }
+
+
 }

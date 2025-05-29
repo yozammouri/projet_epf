@@ -12,23 +12,23 @@ class Intervenant
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(name: 'id_intervenant', type: 'integer')]
+    private ?int $id_intervenant = null;
 
     #[ORM\Column(length: 255)]
     private ?string $civilite = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    // #[ORM\Column(length: 255)]
+    // private ?string $email = null;
 
     #[ORM\Column]
     private ?int $tel = null;
@@ -38,6 +38,10 @@ class Intervenant
 
     #[ORM\Column(length: 255)]
     private ?string $etablissement_origine = null;
+
+    #[ORM\OneToOne(inversedBy: "intervenant", cascade: ["persist", "remove"])]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
 
     /**
      * @var Collection<int, ActiviteEnseignement>
@@ -50,14 +54,14 @@ class Intervenant
         $this->activiteEnseignements = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getIdIntervenant(): ?int
     {
-        return $this->id;
+        return $this->id_intervenant;
     }
 
-    public function setId(int $id): static
+    public function setIdIntervenant(int $id_intervenant): static
     {
-        $this->id = $id;
+        $this->id_intervenant = $id_intervenant;
 
         return $this;
     }
@@ -74,29 +78,29 @@ class Intervenant
         return $this;
     }
 
-    public function getNom(): ?string
-    {
-        return $this->nom;
-    }
+    // public function getNom(): ?string
+    // {
+    //     return $this->nom;
+    // }
 
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
+    // public function setNom(string $nom): static
+    // {
+    //     $this->nom = $nom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
+    // public function getPrenom(): ?string
+    // {
+    //     return $this->prenom;
+    // }
 
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
+    // public function setPrenom(string $prenom): static
+    // {
+    //     $this->prenom = $prenom;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getAdresse(): ?string
     {
@@ -110,17 +114,17 @@ class Intervenant
         return $this;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
+    // public function getEmail(): ?string
+    // {
+    //     return $this->email;
+    // }
 
-    public function setEmail(string $email): static
-    {
-        $this->email = $email;
+    // public function setEmail(string $email): static
+    // {
+    //     $this->email = $email;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function getTel(): ?int
     {
@@ -157,6 +161,18 @@ class Intervenant
 
         return $this;
     }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
 
     /**
      * @return Collection<int, ActiviteEnseignement>
