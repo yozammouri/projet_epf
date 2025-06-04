@@ -44,7 +44,7 @@ security:
     access_control:
         - { path: ^/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: ROLE_COORDINATEUR}
-        - { path: ^/api,       roles: ROLE_USER }
+        - { path: ^/api/apprenant,roles: ROLE_COORDINATEUR}
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
