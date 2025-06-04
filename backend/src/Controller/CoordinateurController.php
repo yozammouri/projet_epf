@@ -10,15 +10,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CoordinateurController extends AbstractController
 {
-    #[Route('/api/coordinateur', name: 'app_coordinateur')]
+    #[Route('/api/coordinateur/all', name: 'app_coordinateur')]
     public function index(CoordinateurRepository $cReop): JsonResponse
     {
         $coord = $cReop->findOneBy(['id_coordinateur'=>2]);
+        $coordinateur = $cReop->findAll();
+        return $this->json($coordinateur);
+        // return new JsonResponse([
+        //     'data'=>12344,
+        //     'user'=> $this->getUser()->getUserIdentifier()
+        // ]);
 
-        return new JsonResponse([
-            'data'=>12344,
-            'user'=> $this->getUser()->getUserIdentifier()
-        ]);
         
     }
 }

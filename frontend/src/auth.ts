@@ -30,12 +30,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const tokens : BackendJWT = await res.json();
           if (!res.ok) throw tokens;
             
-            // localStorage.setItem("token",tokens.token)
-            console.log("Access Token: ", tokens.token);
-            console.log("Refresh Token: ", tokens.refreshToken);
+            // console.log("Access Token: ", tokens.token);
+            // console.log("Refresh Token: ", tokens.refreshToken);
 
             const accessPayload: Payload = jwtDecode(tokens.token);
-            // const refresh: string = tokens.refreshToken;
             const refresh_expiration: number = tokens.refresh_token_expiration
 
             const user : UserObject = {
@@ -49,7 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             // Extract the auth validity from the tokens
             const validity: AuthValidity = {
               valid_until: accessPayload.exp,
-              refresh_until: refresh_expiration      //this is just an experimntal value until i get the solution
+              refresh_until: refresh_expiration      
             };
             // Return the object that next-auth calls 'User' (which we've defined in next-auth.d.ts)
             return {
@@ -58,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               user: user,
               validity: validity
             } as User;
+            
         }catch (error) {
             console.error(error);
             return null;
@@ -71,30 +70,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     // The returned value of this callback will be encrypted, and it is stored in a cookie.
     async jwt({ token, user}) { // token is NEXTAUTH token 
+      // console.log("This is the object /token/ : ",token)
+      // const RT: string = token.data.tokens.refreshToken as string;
+
     // On sign-in: user contains data from backend (e.g., the JWT token)
         if (user) {
           console.debug("Initial signin");
           return { ...token, data: user };
+          
         }
+
         if(Date.now() < token.data.validity.valid_until*1000){
           console.log("Access Token is still valid");
           return token;
         }
 
-        if(Date.now() > token.data.validity.refresh_until*1000){
-          console.log("Access token is being refreshed => Sending another one")
+        if(Date.now() < token.data.validity.refresh_until*1000){
+          // console.log("MEMEMEMEMEME",token.data.tokens.refreshToken);
+          // console.log("Access token is being refreshed => Sending another one")
           try {
+            // console.log("the initial refresh token : ",token.data.tokens.refreshToken);
+            // console.log(typeof(token.data.tokens.refreshToken))
             const res = await fetch(`${BASE_URL}/api/token/refresh`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ refreshToken: token.data.tokens.refreshToken }),
+              body: JSON.stringify({ refreshToken : token.data.tokens.refreshToken }),
             });
 
-            if (!res.ok) throw new Error("Failed to refresh token");
+            const refreshedTokens: BackendJWT= await res.json();
+            // console.log(typeof(refreshedTokens))
+            console.log("refreshedTokens : ",refreshedTokens)
+            const refreshedTokensPayload: Payload = jwtDecode(refreshedTokens.token);
+            // console.log("refreshedTokensPayload : ",refreshedTokensPayload)
+            
+            if (!res.ok) throw refreshedTokens
 
-            const refreshedTokens = await res.json();
-            const refreshedTokensPayload: Payload = jwtDecode(refreshedTokens);
+            // console.log("refreshedTokens : ",refreshedTokens)
 
+            
+            console.log("Token refreshed!!!")
             return {
               ...token,
               data: {
@@ -129,10 +143,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.token = token.data.tokens.token
       session.validity = token.data.validity;
       session.error = token.error;
-
+      console.log("session Created for ",session.user.nom,"",session.user.prenom);
       return session;
-    }
+    },
   },
+  
     pages: {
       signIn : "/login"
     }

@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ApprenantRepository::class)]
 class Apprenant // extends User
@@ -14,6 +16,7 @@ class Apprenant // extends User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['apprenant:read'])]
     private ?int $id_apprenant = null;
 
     // #[ORM\Column(length: 255)]
@@ -23,37 +26,47 @@ class Apprenant // extends User
     // private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $adresse = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Groups(['apprenant:read'])]
     private ?\DateTimeImmutable $date_naissance = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['apprenant:read'])]
     private ?string $tel = null;
 
     // #[ORM\Column(length: 255)]
     // private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $sexe = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $nationnalite = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $profession = null;
 
     #[ORM\Column]
+    #[Groups(['apprenant:read'])]
     private ?int $anne_experience = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $dernier_diplome = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['apprenant:read'])]
     private ?string $photo = null;
 
     #[ORM\OneToOne(inversedBy: "apprenant", cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['apprenant:read'])]
     private User $user;
 
     /**
@@ -69,6 +82,7 @@ class Apprenant // extends User
         new ORM\JoinColumn(name: 'session_id', referencedColumnName: 'id')
     ]
     )]
+    #[Groups(['apprenant:read'])]
     private Collection $sessions;
 
     
@@ -77,12 +91,12 @@ class Apprenant // extends User
         $this->sessions = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getIdApprenant(): ?int
     {
         return $this->id_apprenant;
     }
 
-    public function setId(int $id_apprenant): static
+    public function setIdApprenant(int $id_apprenant): static
     {
         $this->id_apprenant = $id_apprenant;
 

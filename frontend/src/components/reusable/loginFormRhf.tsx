@@ -19,11 +19,15 @@ import LoadingButton from "./loadingButton"
 import { useState } from "react"
 import ErrorMessage from "./error-message"
 import { handleCredentialsSignin } from "@/actions/auth/login"
+import { useRouter } from 'next/navigation'
+
 
 
 
 export default function loginFormRhf() {
     const [globalError, setGlobalError] = useState<string>("");
+    const router = useRouter()
+
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -38,6 +42,11 @@ export default function loginFormRhf() {
             // toast("You submitted the following values:")
             if (result?.message) {
                 setGlobalError(result.message);
+
+            }else{
+                // ✅ Connexion réussie : refresh session et rediriger
+                router.refresh();
+                router.push("/login");
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
