@@ -6,6 +6,7 @@ use App\Repository\CoordinateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CoordinateurRepository::class)]
 class Coordinateur // extends User
@@ -13,6 +14,7 @@ class Coordinateur // extends User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['coordinateur:read'])]
     private ?int $id_coordinateur = null;
 
     // #[ORM\Column(length: 255)]
@@ -22,19 +24,24 @@ class Coordinateur // extends User
     // private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['coordinateur:read'])]
     private ?string $adresse = null;
 
-    #[ORM\Column]
-    private ?int $tel = null;
+    #[ORM\Column(length: 20)]
+    #[Groups(['coordinateur:read'])]
+    private ?string $tel = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['coordinateur:read'])]
     private ?string $matricule = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['coordinateur:read'])]
     private ?string $photo = null;
 
     #[ORM\OneToOne(inversedBy: "coordinateur", cascade: ["persist", "remove"])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['coordinateur:read'])]
     private User $user;
 
     /**
@@ -49,6 +56,7 @@ class Coordinateur // extends User
         new ORM\JoinColumn(name: "formation_id", referencedColumnName: "id")
     ]
     )]
+    #[Groups(['coordinateur:read'])]
     private Collection $formations;
 
     /**
@@ -63,6 +71,7 @@ class Coordinateur // extends User
             new ORM\JoinColumn(name: "syllabus_id", referencedColumnName: "id")
         ]
     )]
+    #[Groups(['coordinateur:read'])]
     private Collection $syllabuss;
 
     public function __construct()
@@ -71,12 +80,12 @@ class Coordinateur // extends User
         $this->syllabuss = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getIdCoordinateur(): ?int
     {
         return $this->id_coordinateur;
     }
 
-    public function setId(int $id_coordinateur): static
+    public function setIdCoordinateur(int $id_coordinateur): static
     {
         $this->id_coordinateur = $id_coordinateur;
 

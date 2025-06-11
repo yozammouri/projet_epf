@@ -10,18 +10,17 @@ import {
 
 export default async function ApprenantItem({ apprenant }: { apprenant: Apprenant }) {
        const session = await auth();
-      // const { data: session} = useSession();
     if(session?.user.roles.includes("ROLE_COORDINATEUR")) { 
       return (
-        <div className="w-[1000px] mx-auto">
-          <li key={apprenant.id_apprenant} className="grid grid-cols-4 items-center py-4 border-b">
+        <div className="w-[800px] mx-auto">
+          <li key={apprenant.id_apprenant} className="grid grid-cols-4 items-center py-5 border-b">
             
             {/* Colonne 1 : Image & Nom */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-evenly gap-2">
               {/* <img alt="" src="../../favicon.ico" className="w-6 h-6 rounded-full bg-gray-50" /> */}
               <Avatar>
-                <AvatarImage src="https://github.com/leerob.png" alt="@leerob" />
-                <AvatarFallback>LR</AvatarFallback>
+              <AvatarImage src="https://github.com/leerob.png" alt="@leerob" />
+              <AvatarFallback>LR</AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-semibold text-gray-900">
@@ -32,7 +31,7 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
             </div>
 
             {/* Colonne 2 : Détails */}
-            <div>
+            <div className='ml-[30px]'>
               <Link
                 href={`/coordinateur/apprenants/details/${apprenant.id_apprenant}`}
                 className="group relative text-black text-sm"
@@ -51,7 +50,7 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
             </div>
 
             {/* Colonne 4 : Actions */}
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-1">
               <ActionButtons apprenant={apprenant} />
             </div>
           </li>

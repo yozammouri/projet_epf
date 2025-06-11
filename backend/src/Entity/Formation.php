@@ -6,6 +6,7 @@ use App\Repository\FormationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
 class Formation
@@ -13,42 +14,53 @@ class Formation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['formation:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['formation:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['formation:read'])]
     private ?string $description = null;
 
     /**
      * @var Collection<int, Promotion>
      */
     #[ORM\OneToMany(targetEntity: Promotion::class, mappedBy: 'formation')]
+    #[Groups(['formation:read'])]
     private Collection $promotions;
 
     /**
      * @var Collection<int, Catalogue>
      */
     #[ORM\ManyToMany(targetEntity: Catalogue::class, inversedBy: 'formations')]
+    #[Groups(['formation:read'])]
     private Collection $catalogue;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['formation:read'])]
     private ?string $objectifs = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['formation:read'])]
     private ?string $prerequis = null;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['formation:read'])]
     private ?string $public = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['formation:read'])]
     private ?string $categorie = null;
 
     #[ORM\Column]
+    #[Groups(['formation:read'])]
     private ?int $volume_horaire = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['formation:read'])]
     private ?string $lieux = null;
 
     /**

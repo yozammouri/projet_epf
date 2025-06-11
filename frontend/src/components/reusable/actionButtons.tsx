@@ -10,13 +10,13 @@ export default async function actionButtons({ apprenant }: { apprenant: Apprenan
     if(session?.user && session.user.roles.includes("ROLE_COORDINATEUR")) {
         return (
             <>
-                <Button className="text-sm text-blue-400/100 bg-white hover:bg-blue-400/100 hover:text-white transition-colors duration-200">
+                <Button className="text-sm text-blue-400/100 bg-white hover:bg-blue-400/100 hover:text-white hover:cursor-pointer transition-colors duration-200">
                         Edit
                 </Button>
 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className="text-sm text-black bg-white hover:text-white transition-colors duration-200">
+                        <Button className="text-sm text-black bg-white hover:text-white hover:cursor-pointer transition-colors duration-200">
                             Delete
                         </Button>
                     </DialogTrigger>

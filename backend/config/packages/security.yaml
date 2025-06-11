@@ -45,6 +45,7 @@ security:
         - { path: ^/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: ROLE_COORDINATEUR}
         - { path: ^/api/apprenant,roles: ROLE_COORDINATEUR}
+        - { path: ^/api/coordinateur,roles: ROLE_COORDINATEUR}
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 

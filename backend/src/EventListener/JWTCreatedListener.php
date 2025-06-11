@@ -37,7 +37,8 @@ public function onJWTCreated(JWTCreatedEvent $event)
 
         // $payload = $event->getData();
          
-        $payload['ip'] = $request?->getClientIp(); // safe navigation in case request is null
+        // $payload['ip'] = $request?->getClientIp(); // safe navigation in case request is null
+        $payload['id'] = $user->getId();
         $payload['username'] = $user->getEmail();
         $payload['roles'] = $user->getRoles();
         $payload['nom'] = $user->getNom();
