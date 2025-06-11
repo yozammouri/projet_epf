@@ -15,6 +15,16 @@ class CoordinateurRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Coordinateur::class);
     }
+    
+    // public function findOneByUserId(int $userId): ?Coordinateur
+    // {
+    //     return $this->createQueryBuilder('c')
+    //         ->join('c.user', 'u')
+    //         ->where('u.id = :userId')
+    //         ->setParameter('userId', $userId)
+    //         ->getQuery()
+    //         ->getOneOrNullResult();
+    // }
 
     //    /**
     //     * @return Coordinateur[] Returns an array of Coordinateur objects

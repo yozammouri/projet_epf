@@ -37,7 +37,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const refresh_expiration: number = tokens.refresh_token_expiration
 
             const user : UserObject = {
-              ip: accessPayload.ip,
+              id: accessPayload.id,
               username: accessPayload.username,
               roles: accessPayload.roles,
               nom: accessPayload.nom,
@@ -118,7 +118,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   refresh_token_expiration: refreshedTokens.refresh_token_expiration
                 },
                 user: {
-                  ip: refreshedTokensPayload.ip,
+                  id: refreshedTokensPayload.id,
                   username: refreshedTokensPayload.username,
                   roles: refreshedTokensPayload.roles,
                   nom: refreshedTokensPayload.nom,

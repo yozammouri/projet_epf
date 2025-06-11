@@ -1,19 +1,13 @@
 "use server"
-
-
 import { AuthError } from "next-auth";
-import { auth, signIn, signOut } from '@/auth'
-import { redirect } from "next/navigation";
+import { signIn, signOut } from '@/auth'
 
 export async function handleCredentialsSignin({ email, password }: {
     email: string,
     password: string
 }) {
-    // const session = await auth()
     try {
         await signIn("credentials", { email, password, redirect:false});
-        // if(session?.user.roles.includes("ROLE_COORDINATEUR")){redirect("/coordinateur")}
-        // if(session?.user.roles.includes("ROLE_APPRENANT")){redirect("/apprenant")}
 
         
     } catch (error) {

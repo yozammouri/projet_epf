@@ -4,7 +4,7 @@ import NextAuth from "next-auth";
 declare module "next-auth" {
 
   export interface UserObject {
-    ip: string,
+    id: number,
     username: string,
     roles: string[],
     nom: string,

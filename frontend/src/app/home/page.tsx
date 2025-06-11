@@ -1,9 +1,10 @@
-import { auth } from '@/auth'
+import { auth } from '@/auth';
 import Navbar from '@/components/reusable/navbar'
-import { redirect } from 'next/navigation';
 import React from 'react'
 
 export default async function page() {
+  const session = await auth();
+  if(!session?.user)
   return (
     <>  
         <Navbar />

@@ -19,19 +19,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['apprenant:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['apprenant:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['apprenant:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['apprenant:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read'])]
     private ?string $email = null;
 
     /**
@@ -52,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: "user", targetEntity: Coordinateur::class)]
     private ?Coordinateur $coordinateur = null;
 
-     #[ORM\OneToOne(mappedBy: "user", targetEntity: Coordinateur::class)]
+    #[ORM\OneToOne(mappedBy: "user", targetEntity: Intervenant::class)]
     private ?Intervenant $intervenant = null;
 
 
