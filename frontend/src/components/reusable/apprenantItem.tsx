@@ -12,7 +12,7 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
        const session = await auth();
     if(session?.user.roles.includes("ROLE_COORDINATEUR")) { 
       return (
-        <div className="w-[800px] mx-auto">
+        <div className="w-full mx-auto">
           <li key={apprenant.id_apprenant} className="grid grid-cols-4 items-center py-5 border-b">
             
             {/* Colonne 1 : Image & Nom */}
@@ -31,7 +31,7 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
             </div>
 
             {/* Colonne 2 : Détails */}
-            <div className='ml-[30px]'>
+            <div className='ml-[60px]'>
               <Link
                 href={`/coordinateur/apprenants/details/${apprenant.id_apprenant}`}
                 className="group relative text-black text-sm"

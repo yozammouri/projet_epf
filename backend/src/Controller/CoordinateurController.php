@@ -11,6 +11,9 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class CoordinateurController extends AbstractController
 {
@@ -93,6 +96,67 @@ final class CoordinateurController extends AbstractController
             'adresse' => $coordinateur->getAdresse(), // exemple
             'tel' => $coordinateur->getTel(),
             'matricule' => $coordinateur->getMatricule(),
+            'photo' => $coordinateur->getPhoto()
         ]);
     }
+
+        #[Route('/api/coordinateur/update/{id}', name: 'update_coordinateur', methods: ['POST', 'PUT'])]
+        public function updateCoordinateur(int $id, Request $request, EntityManagerInterface $em,CoordinateurRepository $cr , SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
+        {
+            // $coordinateur = $cr->find($id);
+            // if (!$coordinateur) {
+            //     return new JsonResponse(['error' => 'Coordinateur not found'], 404);
+            // }
+
+            // // Deserialize and populate existing object (not create new)
+            // $serializer->deserialize(
+            //     $request->getContent(),
+            //     Coordinateur::class,
+            //     'json',
+            //     ['object_to_populate' => $coordinateur]
+            // );
+
+            // $em->flush();
+
+            // return new JsonResponse(['message' => 'Coordinateur updated'], 200);
+
+            $coordinateur = $cr->find($id);
+
+            if (!$coordinateur) {
+                return new JsonResponse(['error' => 'Coordinateur not found'], 404);
+            }
+
+            // 🔁 1. Manually get raw fields from the request
+            $data = $request->request->all();
+
+            // 🔁 2. Use serializer to update the entity (only text fields)
+            $serializer->deserialize(
+                json_encode($data),
+                Coordinateur::class,
+                'json',
+                ['object_to_populate' => $coordinateur]
+            );
+
+            // 📂 3. Handle file upload manually
+            $file = $request->files->get('photo');
+
+            if ($file) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+                try {
+                    $file->move($this->getParameter('uploads_directory'), $newFilename);
+                    $coordinateur->setPhoto('uploads/' . $newFilename);
+                } catch (FileException $e) {
+                    return new JsonResponse(['error' => 'File upload failed'], 500);
+                }
+            }
+
+            // 💾 4. Persist changes
+            $em->flush();
+
+            return new JsonResponse(['message' => 'Coordinateur updated']);
+
+        }
 }

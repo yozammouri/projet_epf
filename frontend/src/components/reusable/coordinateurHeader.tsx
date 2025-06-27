@@ -10,10 +10,18 @@ import {
 import { ModeToggle } from './themeButton'
 import { handleSignOut } from '@/actions/auth/login'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import Link from 'next/link'
+import { BASE_URL } from '@/lib/constants'
+import { getCoordinateurByUserId } from '@/lib/api/coordinateurApi'
 
 export default async function () {
     const session = await auth()
     if(!session?.user.roles.includes("ROLE_COORDINATEUR")) return 
+    const userId: number = session.user.id;
+    const token: string = session.token;
+    const coordinateurConnected = await getCoordinateurByUserId(userId, token)
+    console.log('PHOTO PATH:', coordinateurConnected.photo)
+    console.log("BaseUrl", BASE_URL)
     return (
         <>
             <header className="w-screen fixed top-0 left-1/2 -translate-x-1/2 flex justify-end items-center py-4 bg-violet-600 shadow-xs z-1">
@@ -25,7 +33,7 @@ export default async function () {
                     </div>
                     {/* <div className=''><SignoutButton /></div> */}
                     <div className='w-[600px] flex items-center'>
-                        <form className="w-[400px] h-[50px] flex items-center bg-violet-800 rounded-[5px] ">
+                        <form className="hidden sm:flex w-[400px] h-[50px] items-center bg-violet-800 rounded-[5px]">
                             <Search className="text-white ml-4 mr-3 w-5 h-5" />
                             <input
                                 type="text"
@@ -51,13 +59,15 @@ export default async function () {
                             </DropdownMenu>
                             <DropdownMenu>
                             <DropdownMenuTrigger className='flex justify-center items-center'>
-                                {/* <img src="/assets/settings.svg" alt="settings_icon" className='w-[27px] h-[25px] hover:cursor-pointer hover:bg-violet-700' /> */}
+                                {/* <img src={`http://localhost/${coordinateurConnected.photo}`} alt="settings_icon" className='w-[27px] h-[25px] rounded-full object-contain hover:cursor-pointer hover:bg-violet-700' /> */}
                                 <Avatar>
-                                    <AvatarImage className='hover:cursor-pointer hover:bg-violet-700' src="https://github.com/shadcn.png" alt="@shadcn" />
+                                    <AvatarImage className='hover:cursor-pointer hover:bg-violet-700 object-cover' src={`http://localhost/${coordinateurConnected.photo}`} alt="@shadcn" />
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem className="hover:cursor-pointer focus:text-white focus:bg-violet-600 transition">account</DropdownMenuItem>
+                                <DropdownMenuItem className="hover:cursor-pointer focus:text-white focus:bg-violet-600 transition">
+                                    <Link href='/coordinateur/account'>account</Link> 
+                                    </DropdownMenuItem>
                                     <form action={handleSignOut}>
                                         <button type="submit">
                                             <DropdownMenuItem className="w-[120px] focus:bg-red-500 focus:text-white cursor-pointer transition">
