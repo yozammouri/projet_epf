@@ -15,7 +15,19 @@ export async function getCoordinateurByUserId(id: number, token: string){
             }
   });
 
-  if (!res.ok){console.log("coordinateur was not found")};
+  const contentType = res.headers.get("content-type");
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("Error response from backend:", text);
+
+    if (contentType && contentType.includes("application/json")) {
+      const error = await res.json();
+      throw new Error(error.message || "Failed to fetch coordinateur");
+    } else {
+      throw new Error("Unexpected response from server");
+    }
+  }
 
   return res.json();
 }

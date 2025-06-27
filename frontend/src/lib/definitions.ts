@@ -84,3 +84,45 @@ export const registerSchema = z.object({
       }
     ),
 });
+
+
+
+const namePattern = /^[^\d][\p{L}\p{M}\s'-]{1,}$/u;
+export const updateCoordinateurSchema = z.object({
+  nom: z
+    .string()
+    .min(2, "Le nom doit comporter au moins 2 caractères")
+    .max(255, "Le nom doit comporter au maximum 255 caractères")
+    .regex(namePattern, "Le nom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+  
+  prenom: z
+    .string()
+    .min(2, "Le prénom doit comporter au moins 2 caractères")
+    .max(255, "Le prénom doit comporter au maximum 255 caractères")
+    .regex(namePattern, "Le prénom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+  username: z.string().email("Email invalide"),  
+  adresse: z
+    .string()
+    .max(255, "L'adresse doit comporter au maximum 255 caractères"),
+
+  tel: z
+    .string()
+    .max(20, "Le numéro de téléphone doit comporter au maximum 20 caractères")
+    .regex(/^[\d+\s().-]*$/, "Numéro de téléphone invalide"),
+
+  matricule: z
+    .string()
+    .max(255, "Le matricule doit comporter au maximum 255 caractères"),
+
+  photo: z
+    .any()
+    .optional()
+    .refine((file) => {
+      if (!file) return true; // allow empty (not required)
+      return file instanceof File && file.size <= 5 * 1024 * 1024; // 5MB max
+    }, "Le fichier doit être une image valide et ne pas dépasser 5 Mo")
+    .refine((file) => {
+      if (!file) return true;
+      return ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+    }, "Format de fichier invalide (jpeg, png ou webp uniquement)"),  
+});

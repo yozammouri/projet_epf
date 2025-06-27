@@ -33,123 +33,126 @@ export default async function page({ searchParams }: { searchParams: { apprenant
   const { data, pagination } = apprenants;
   return (
     <>
-      <div className='w-full flex flex-col '>
-        <div className='flex w-full h-[400px] mt-[100px] '>
-          <div className="flex flex-col justify-center w-[900px]"> {/*TOP LEFT*/}
-            <div className="flex justify-between items-center"> {/*Create Apprenant Button*/}
-              <div className="font-bold ml-[140px]">APPRENANTS LIST:</div>
-              <Link href="/somewhere">
-                <Button className="border h-[50px] text-md text-black bg-white hover:cursor-pointer hover:bg-black hover:text-white transition-colors duration-200 rounded-[3px]">Create Apprenant</Button>
+    <div className="w-full flex flex-col px-4">
+      <div className="flex flex-col lg:flex-row w-full mt-8 sm:mt-[100px] gap-6">
+        
+        {/* LEFT PANEL */}
+        <div className="flex flex-col justify-start w-full lg:max-w-[750px]">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+            <h2 className="font-bold mb-2 sm:mb-0">APPRENANTS LIST:</h2>
+            <Link href="/somewhere">
+              <Button className="border h-[50px] text-md text-black bg-white hover:bg-black hover:text-white transition-colors duration-200 rounded-md">
+                Create Apprenant
+              </Button>
+            </Link>
+          </div>
+
+          {/* Apprenants list */}
+          <ul className="bg-white rounded-md shadow-xl min-h-[230px] p-2 mb-4 sm:[592px]">
+            {data.map((apprenant: Apprenant) => (
+              <ApprenantItem key={apprenant.id_apprenant} apprenant={apprenant} />
+            ))}
+          </ul>
+
+          {/* Pagination */}
+          <div className="w-full flex justify-center gap-4 items-center">
+            {apprenantPage > 1 && (
+              <Link
+                href={`/coordinateur?apprenantPage=${apprenantPage - 1}&formationPage=${formationPage}`}
+                className="text-xs hover:-translate-y-1 transition-transform"
+              >
+                ← Previous
               </Link>
+            )}
+            <span className="font-bold">{apprenantPage}</span>
+            {apprenantPage < pagination.total_pages && (
+              <Link
+                href={`/coordinateur?apprenantPage=${apprenantPage + 1}&formationPage=${formationPage}`}
+                className="text-xs hover:-translate-y-1 transition-transform"
+              >
+                Next →
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div className="flex flex-col w-full gap-6">
+          {/* Cards (Top) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+            <div className="relative h-[125px] rounded-xl overflow-hidden shadow-xl">
+              <img src="/assets/abstract-black-background.jpg" className="absolute w-full h-full object-cover" />
+              <div className="relative p-3 text-white">
+                <p>Total Apprenant</p>
+                <h1 className="font-bold text-3xl">1277</h1>
+                <p className="text-xs"><span className="text-green-500">10%</span> Better than last month!</p>
+              </div>
             </div>
 
-            <div> {/*Apprenants list*/}
-              <ul className="ml-[5px] mt-[5px] bg-white rounded-md shadow-xl min-h-[231.3px]">
-                {data.map((apprenant: Apprenant ) => (
-                  <ApprenantItem key={apprenant.id_apprenant} apprenant={apprenant}/>
+            <div className="relative h-[125px] bg-white text-black rounded-xl shadow-xl p-3">
+              <p>Total Intervenant</p>
+              <h1 className="font-bold text-3xl">98</h1>
+              <p className="text-xs"><span className="text-red-500">0.5%</span> Lesser than last month!</p>
+            </div>
+
+            <div className="flex flex-col justify-center items-center h-[125px] bg-white text-black rounded-xl shadow-xl">
+              <DateTimeDisplay />
+            </div>
+          </div>
+
+          {/* Bottom: Formations + Events */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Formations */}
+            <div className="flex flex-col flex-1 bg-white rounded-md shadow-xl p-4 text-black">
+              <h1 className="font-bold text-center mb-2">FORMATIONS GÈRÈES</h1>
+              <ul className="flex flex-col gap-2 min-h-[250px]">
+                {formationData.map((formation: Formation) => (
+                  <FormationItem key={formation.id} formation={formation} />
                 ))}
               </ul>
-            </div>
 
-            <div className="w-[900px] ml-[5px] mt-4 flex justify-evenly items-center space-x-4"> {/*Previous/next buttons*/}
-                {apprenantPage > 1 && (
+              <div className="w-full flex justify-center items-center gap-4 mt-4">
+                {formationPage > 1 && (
                   <Link
-                    href={`/coordinateur?apprenantPage=${apprenantPage - 1}&formationPage=${formationPage}`}
-                    className="mr-auto bg-transparant-400 px-4 py-2 rounded text-xs transition-transform duration-100 hover:-translate-y-1"
+                    href={`/coordinateur?formationPage=${formationPage - 1}&apprenantPage=${apprenantPage}`}
+                    className="text-xs hover:-translate-y-1 transition-transform"
                   >
                     ← Previous
                   </Link>
                 )}
-                <div className="">
-                  <button
-                    className="w-13 h-13 flex items-center justify-center rounded-full bg-none font-bold"
-                    aria-label="Page actuelle"
-                  >
-                    {apprenantPage}
-                  </button>
-                </div>
-                {apprenantPage < pagination.total_pages && (
+                <span className="font-bold">{formationPage}</span>
+                {formationPage < formationPagination.total_pages && (
                   <Link
-                    href={`/coordinateur?apprenantPage=${apprenantPage + 1}&formationPage=${formationPage}`}
-                    className="ml-auto bg-transparent px-4 py-2 rounded text-xs transition-transform duration-100 hover:-translate-y-1"
+                    href={`/coordinateur?formationPage=${formationPage + 1}&apprenantPage=${apprenantPage}`}
+                    className="text-xs hover:-translate-y-1 transition-transform"
                   >
                     Next →
                   </Link>
                 )}
-            </div>
-
-          </div>
-          <div className='flex flex-col w-full'> {/*TOP RIGHT*/}
-            <div className='flex w-full h-[200px]'> {/*upper container*/}
-              <div className='relative w-[300px] h-[125px] rounded-xl bg-black text-white m-auto shadow-xl'>
-                <img className='w-[300px] h-[125px] rounded-xl' src="/assets/abstract-black-background.jpg" />
-                <p className='absolute top-[10px] left-[10px]'>Total Apprenant</p>
-                <h1 className='absolute top-[44px] left-[10px] font-bold text-3xl'>1277</h1>
-                <p className='absolute bottom-[10px] left-[10px] text-xs'><span className='text-green-500'>10%</span> Better than last month!</p>
-              </div>
-              <div className='relative w-[300px] h-[125px] rounded-xl bg-white text-black m-auto shadow-xl'>
-                <p className='absolute top-[10px] left-[10px]'>Total Intervenant</p>
-                <h1 className='absolute top-[44px] left-[10px] font-bold text-3xl'>98</h1>
-                <p className='absolute bottom-[10px] left-[10px] text-xs'><span className='text-red-500'>0.5%</span> Lesser than last month!</p>
-              </div>
-              <div className='relative flex flex-col justify-center items-center w-[300px] h-[125px] rounded-xl bg-white text-black m-auto shadow-xl'>
-                <DateTimeDisplay />
               </div>
             </div>
-            <div className='flex w-full h-full'> {/*bottom container*/}
-                <div className='flex flex-col w-[628px] h-full mx-auto rounded-md bg-white text-black shadow-xl'> {/*left container*/}
-                  <h1 className='font-bold mx-auto mt-[10px]'>FORMATIONS GÈRÈES</h1>
-                  <ul className="flex flex-col justify-center items-center ml-[5px] mt-[5px] bg-white rounded-md min-h-[250px]">
-                    {formationData.map((formation: Formation) => (
-                      <FormationItem key={formation.id} formation={formation} />
-                    ))}
-                  </ul>
-                  <div className="w-[627.99px] ml-[5px] flex justify-evenly items-center space-x-4"> {/*Previous/next buttons formations*/}
-                    { formationPage > 1 && (
-                      <Link
-                        href={`/coordinateur?formationPage=${formationPage - 1}&apprenantPage=${apprenantPage}`}
-                        className="mr-auto bg-transparant-400 px-4 py-2 rounded text-xs transition-transform duration-100 hover:-translate-y-1"
-                      >
-                        ← Previous
-                      </Link>
-                    )}
-                    <div className="">
-                      <button
-                        className="w-13 h-13 flex items-center justify-center rounded-full bg-none font-bold"
-                        aria-label="Page actuelle"
-                      >
-                        {formationPage}
-                      </button>
-                    </div>
-                    {formationPage < formationPagination.total_pages && (
-                      <Link
-                        href={`/coordinateur?formationPage=${formationPage + 1}&apprenantPage=${apprenantPage}`}
-                        className="ml-auto bg-transparent px-4 py-2 rounded text-xs transition-transform duration-100 hover:-translate-y-1"
-                      >
-                        Next →
-                      </Link>
-                    )}
-                  </div>
-                </div>
-                <div className='flex flex-col items-center w-[300px] h-full mx-auto rounded-md bg-white text-black shadow-xl'> {/*right container*/}
-                  <div className='flex justify-center items-center mt-[10px] w-full'>
-                    <h1 className='font-bold'>EVENTS</h1>
-                  </div>
-                  <div className='flex justify-center items-center mt-[40px] w-full h-[200px] '>
-                    <h1 className='text-xs'>No events available</h1>
-                  </div>
-                </div>
-            </div> 
-          </div>
-        </div>
 
-        <div className="flex justify-center mt-[55px]"> {/*Charts*/}
-          <div className="w-full max-w-[1600px] h-[400px] min-h-[200px]">
-            <div className="font-bold mb-2">APPLICATION CHARTS:</div>
-            <Component />
+            {/* Events */}
+            {/* <div className="flex flex-col items-center justify-start bg-white rounded-md shadow-xl flex-[0.4] p-4">
+              <h1 className="font-bold mb-4">EVENTS</h1>
+              <div className="flex justify-center items-center h-[200px] w-full">
+                <p className="text-xs">No events available</p>
+              </div>
+            </div> */}
           </div>
         </div>
       </div>
+
+      {/* CHARTS */}
+      <div className="w-full mt-12 max-w-screen-xl mx-auto px-4">
+        <h2 className="font-bold mb-2">APPLICATION CHARTS:</h2>
+        <div className="p-4 min-h-[200px]">
+          <Component />
+        </div>
+      </div>
+    </div>
+
     </>
   )
 }
