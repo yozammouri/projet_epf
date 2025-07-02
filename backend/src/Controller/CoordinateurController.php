@@ -8,7 +8,9 @@ use App\Repository\CoordinateurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+// use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -17,6 +19,15 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class CoordinateurController extends AbstractController
 {
+    #[Route('/test', name: 'test')]
+    public function test(CoordinateurRepository $coordinateurRepository): JsonResponse
+    {
+        // phpinfo();
+        $coordinateur= $coordinateurRepository->findAll();
+        return new JsonResponse($coordinateur);
+        // return new JsonResponse("HI");
+    }
+
     #[Route('/api/coordinateur/all', name: 'app_coordinateur')]
     public function index(Request $request,EntityManagerInterface $em): JsonResponse
     {

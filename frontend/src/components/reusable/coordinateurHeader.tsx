@@ -20,8 +20,6 @@ export default async function () {
     const userId: number = session.user.id;
     const token: string = session.token;
     const coordinateurConnected = await getCoordinateurByUserId(userId, token)
-    console.log('PHOTO PATH:', coordinateurConnected.photo)
-    console.log("BaseUrl", BASE_URL)
     return (
         <>
             <header className="w-screen fixed top-0 left-1/2 -translate-x-1/2 flex justify-end items-center py-4 bg-violet-600 shadow-xs z-1">

@@ -42,3 +42,11 @@ interface USER {
   prenom: string,
   email: string
 }
+
+interface Message {
+  id: number;
+  sender: number;
+  receiver: number;
+  content: string;
+  createdAt: string;
+}
