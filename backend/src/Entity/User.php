@@ -63,9 +63,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
     private Collection $messages;
 
+    /**
+     * @var Collection<int, Conversation>
+     */
+    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'user')]
+    private Collection $conversations;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
     }
 
 
@@ -225,6 +232,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($message->getSender() === $this) {
                 $message->setSender(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): static
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): static
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            $conversation->removeUser($this);
         }
 
         return $this;

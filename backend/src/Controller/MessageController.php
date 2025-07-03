@@ -33,7 +33,6 @@ final class MessageController extends AbstractController
 
     $message = new Message();
     $message->setSender($sender);
-    $message->setReceiver($receiver);
     $message->setContent($data['content']);
     $message->setCreatedAt(new \DateTimeImmutable());
 
@@ -47,7 +46,6 @@ final class MessageController extends AbstractController
         json_encode([
             'id' => $message->getId(),
             'sender' => $sender->getId(),
-            'receiver' => $receiver->getId(),
             'content' => $message->getContent(),
             'createdAt' => $message->getCreatedAt()->format('c'),
         ])

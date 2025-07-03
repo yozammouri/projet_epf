@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 
 final class ApprenantController extends AbstractController
@@ -75,48 +78,78 @@ final class ApprenantController extends AbstractController
         ],200);
     }
 
-    // #[Route('/api/apprenant/register', name: 'apprenant_register', methods:['POST'])]
-    // public function register(Request $request, EntityManagerInterface $em): JsonResponse
-    // {
-    //     $data = json_decode($request->getContent(), true);
-    //     $NewApprenant = new Apprenant();
+    #[Route('/api/coordinateur/apprenant/update/{id}', name: 'apprenant_register', methods:['POST'])]
+    public function updateApprenant(int $id, Request $request, EntityManagerInterface $em, ApprenantRepository $ar, SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
+    {
+        $apprenant = $ar->find($id);
 
-    //     $form = $this->createForm(ApprenantType::class, $NewApprenant);
-    //     $form->submit($data);
-        
-    //     if (!$form->isValid()) {
-    //         $errors = [];
-    //         foreach ($form->getErrors(true) as $error) {
-    //             $errors[] = $error->getMessage();
-    //         }
+            if (!$apprenant) {
+                return new JsonResponse(['error' => 'Apprenant not found'], 404);
+            }
 
-    //         return new JsonResponse(['errors' => $errors], 400);
-    //     }
-
-        
-    //     $em->persist($NewApprenant);
-    //     $em->flush();
-
-
-    //     return new JsonResponse(['message' => 'new apprenant saved to database!',
-    //         'apprenant' => [
-    //             'id' => $NewApprenant->getId(),
-    //             'nom' => $NewApprenant->getNom(),
-    //             'prenom' => $NewApprenant->getPrenom(),
-    //             'adresse' => $NewApprenant->getAdresse(),
-    //             'date_naissance' => $NewApprenant->getDateNaissance(),
-    //             'tel' => $NewApprenant->getTel(),
-    //             'email' => $NewApprenant->getEmail(),
-    //             'sexe' => $NewApprenant->getSexe(),
-    //             'nationalite' => $NewApprenant->getNationnalite(),
-    //             'profession' => $NewApprenant->getProfession(),
-    //             'anne_experience' => $NewApprenant->getAnneExperience(),
-    //             'dernier_diplome' => $NewApprenant->getDernierDiplome(),
-    //             'photo' => $NewApprenant->getPhoto()
-    //         ]
-    //         ], 201
+            // 🔁 1. Manually get raw fields from the request
+            $data = $request->request->all();
             
-    //     );
+            // ✅ Fix data types BEFORE deserialization
+            if (isset($data['anne_experience'])) {
+                $data['anne_experience'] = (int) $data['anne_experience'];
+            }
+
+            if (isset($data['date_naissance'])) {
+                // Expecting "YYYY-MM-DD" format
+                $data['date_naissance'] = (new \DateTime($data['date_naissance']))->format('Y-m-d');
+            }
+
+            // 🔁 2. Use serializer to update the entity (only text fields)
+            $serializer->deserialize(
+                json_encode($data),
+                Apprenant::class,
+                'json',
+                ['object_to_populate' => $apprenant]
+            );
+            
+
+            // 📂 3. Handle file upload manually
+            $file = $request->files->get('photo');
+
+            if ($file) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
+
+                try {
+                    $file->move($this->getParameter('uploads_directory'), $newFilename);
+                    $apprenant->setPhoto('uploads/' . $newFilename);
+                } catch (FileException $e) {
+                    return new JsonResponse(['error' => 'File upload failed'], 500);
+                }
+            }
+
+            // 💾 4. Persist changes
+            $em->flush();
+            
+            return new JsonResponse(
+                [
+                    'message' => 'Coordinateur updated',
+                    'apprenant' => [
+                        'id' => $apprenant->getIdApprenant(),
+                        'adresse' => $apprenant->getAdresse(),
+                        'date_naissance' => $apprenant->getDateNaissance(),
+                        'tel' => $apprenant->getTel(),
+                        'sexe' => $apprenant->getSexe(),
+                        'nationalite' => $apprenant->getNationnalite(),
+                        'profession' => $apprenant->getProfession(),
+                        'anne_experience' => $apprenant->getAnneExperience(),
+                        'dernier_diplome' => $apprenant->getDernierDiplome(),
+                        'photo' => $apprenant->getPhoto(),
+                        'nom' => $apprenant->getUser()->getNom(),
+                        'prenom' => $apprenant->getUser()->getPrenom(),
+                        'email' => $apprenant->getUser()->getEmail(),
+                        
+                    ]
+                ]);
+
+        
     
-    // }
+    }
 }

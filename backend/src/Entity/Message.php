@@ -15,10 +15,10 @@ class Message
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
-    private ?User $sender = null;
+    private ?Conversation $conversation = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
-    private ?User $receiver = null;
+    private ?User $sender = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content;
@@ -38,6 +38,18 @@ class Message
         return $this;
     }
 
+    public function getConversation(): ?Conversation 
+    {
+        return $this->conversation;
+    }
+    
+    public function setConversation(?Conversation $conversation): static
+    {
+        $this->conversation = $conversation;
+
+        return $this;
+    }
+
     public function getSender(): ?User
     {
         return $this->sender;
@@ -46,18 +58,6 @@ class Message
     public function setSender(?User $sender): static
     {
         $this->sender = $sender;
-
-        return $this;
-    }
-
-    public function getReceiver(): ?User
-    {
-        return $this->receiver;
-    }
-
-    public function setReceiver(?User $receiver): static
-    {
-        $this->receiver = $receiver;
 
         return $this;
     }

@@ -7,10 +7,13 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { Button } from '../ui/button';
 
 export default async function ApprenantItem({ apprenant }: { apprenant: Apprenant }) {
        const session = await auth();
     if(session?.user.roles.includes("ROLE_COORDINATEUR")) { 
+      // const apprenant = await getApprenantById(params.id_apprenant, session.token);
+    
       return (
         <div className="w-full mx-auto">
           <li key={apprenant.id_apprenant} className="grid grid-cols-4 items-center py-5 border-b">
@@ -51,6 +54,11 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
 
             {/* Colonne 4 : Actions */}
             <div className="flex justify-end gap-1">
+              <Link href="/coordinateur/details/">
+                  <Button className="text-sm text-blue-400/100 bg-white hover:bg-blue-400/100 hover:text-white hover:cursor-pointer transition-colors duration-200">
+                    Edit
+                  </Button>                
+              </Link>
               <ActionButtons apprenant={apprenant} />
             </div>
           </li>

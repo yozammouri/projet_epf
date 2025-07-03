@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Coordinateur;
 use App\Entity\Formation;
 use App\Repository\CoordinateurRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -112,7 +113,7 @@ final class CoordinateurController extends AbstractController
     }
 
         #[Route('/api/coordinateur/update/{id}', name: 'update_coordinateur', methods: ['POST', 'PUT'])]
-        public function updateCoordinateur(int $id, Request $request, EntityManagerInterface $em,CoordinateurRepository $cr , SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
+        public function updateCoordinateur(int $id, Request $request, EntityManagerInterface $em, CoordinateurRepository $cr, UserRepository $ur,SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
         {
             // $coordinateur = $cr->find($id);
             // if (!$coordinateur) {
@@ -130,7 +131,7 @@ final class CoordinateurController extends AbstractController
             // $em->flush();
 
             // return new JsonResponse(['message' => 'Coordinateur updated'], 200);
-
+            
             $coordinateur = $cr->find($id);
 
             if (!$coordinateur) {
@@ -147,6 +148,7 @@ final class CoordinateurController extends AbstractController
                 'json',
                 ['object_to_populate' => $coordinateur]
             );
+            
 
             // 📂 3. Handle file upload manually
             $file = $request->files->get('photo');
@@ -166,8 +168,12 @@ final class CoordinateurController extends AbstractController
 
             // 💾 4. Persist changes
             $em->flush();
-
-            return new JsonResponse(['message' => 'Coordinateur updated']);
+            
+            return new JsonResponse(
+                [
+                    'message' => 'Coordinateur updated',
+                    'Coordinateur_prenom' => $coordinateur->getUser()->getPrenom()
+                ]);
 
         }
 }

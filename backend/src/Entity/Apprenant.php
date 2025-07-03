@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 
 #[ORM\Entity(repositoryClass: ApprenantRepository::class)]
@@ -31,6 +33,7 @@ class Apprenant // extends User
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     #[Groups(['apprenant:read'])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     private ?\DateTimeImmutable $date_naissance = null;
 
     #[ORM\Column(length: 20)]
