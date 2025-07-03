@@ -141,6 +141,18 @@ final class CoordinateurController extends AbstractController
             // 🔁 1. Manually get raw fields from the request
             $data = $request->request->all();
 
+            $user = $coordinateur->getUser();
+
+            if (isset($data['nom'])) {
+                $user->setNom($data['nom']);
+            }
+            if (isset($data['prenom'])) {
+                $user->setPrenom($data['prenom']);
+            }
+            if (isset($data['email'])) {
+                $user->setEmail($data['email']);
+            }
+
             // 🔁 2. Use serializer to update the entity (only text fields)
             $serializer->deserialize(
                 json_encode($data),

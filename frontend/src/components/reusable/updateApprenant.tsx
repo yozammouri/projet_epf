@@ -334,11 +334,11 @@ export default function UpdateApprenantForm({
           <label className="block mb-1 font-medium">Sexe</label>
           <select
             {...register("sexe")}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2"
             defaultValue={defaultValues.sexe || ""}
           >
-            <option value="">-- Choisir --</option>
-            <option value="HOME">HOMME</option>
+            <option value="">-- Choisir</option>
+            <option value="HOMME">HOMME</option>
             <option value="FEMME">FEMME</option>
             <option value="AUTRE">AUTRE</option>
           </select>
@@ -349,13 +349,13 @@ export default function UpdateApprenantForm({
           <label className="block mb-1 font-medium">Nationalité</label>
           <select
             {...register("nationnalite")}
-            className="w-full  border border-gray-300 rounded px-3 py-2"
+            className="w-full border rounded px-3 py-2"
             defaultValue={defaultValues.nationnalite || ""}
           >
-            <option className="" value="">-- Choisir --</option>
+            <option value="">-- Choisir</option>
             <option value="Marocaine">Marocaine</option>
             <option value="Française">Française</option>
-            <option value="Algérienne">Algérienne</option>
+            <option value="Américaine">Américaine</option>
             <option value="Autre">Autre</option>
           </select>
           {errors.nationnalite && <p className="text-sm text-red-500 mt-1">{errors.nationnalite.message}</p>}

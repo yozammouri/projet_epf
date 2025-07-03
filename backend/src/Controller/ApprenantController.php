@@ -6,6 +6,7 @@ use App\Entity\Apprenant;
 use App\Repository\ApprenantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -79,7 +80,7 @@ final class ApprenantController extends AbstractController
     }
 
     #[Route('/api/coordinateur/apprenant/update/{id}', name: 'apprenant_register', methods:['POST'])]
-    public function updateApprenant(int $id, Request $request, EntityManagerInterface $em, ApprenantRepository $ar, SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
+    public function updateApprenant(int $id, Request $request, EntityManagerInterface $em, ApprenantRepository $ar, SerializerInterface $serializer, SluggerInterface $slugger, LoggerInterface $logger): JsonResponse
     {
         $apprenant = $ar->find($id);
 
@@ -98,6 +99,18 @@ final class ApprenantController extends AbstractController
             if (isset($data['date_naissance'])) {
                 // Expecting "YYYY-MM-DD" format
                 $data['date_naissance'] = (new \DateTime($data['date_naissance']))->format('Y-m-d');
+            }
+
+            $user = $apprenant->getUser();
+
+            if (isset($data['nom'])) {
+                $user->setNom($data['nom']);
+            }
+            if (isset($data['prenom'])) {
+                $user->setPrenom($data['prenom']);
+            }
+            if (isset($data['email'])) {
+                $user->setEmail($data['email']);
             }
 
             // 🔁 2. Use serializer to update the entity (only text fields)
@@ -124,14 +137,14 @@ final class ApprenantController extends AbstractController
                     return new JsonResponse(['error' => 'File upload failed'], 500);
                 }
             }
-
+            
             // 💾 4. Persist changes
             $em->flush();
-            
             return new JsonResponse(
                 [
                     'message' => 'Coordinateur updated',
                     'apprenant' => [
+                        // 'data' => $data['adresse'],
                         'id' => $apprenant->getIdApprenant(),
                         'adresse' => $apprenant->getAdresse(),
                         'date_naissance' => $apprenant->getDateNaissance(),
@@ -142,12 +155,14 @@ final class ApprenantController extends AbstractController
                         'anne_experience' => $apprenant->getAnneExperience(),
                         'dernier_diplome' => $apprenant->getDernierDiplome(),
                         'photo' => $apprenant->getPhoto(),
+                        'user_id' => $apprenant ->getUser()->getId(),
                         'nom' => $apprenant->getUser()->getNom(),
                         'prenom' => $apprenant->getUser()->getPrenom(),
                         'email' => $apprenant->getUser()->getEmail(),
                         
                     ]
-                ]);
+                ]
+            );
 
         
     
