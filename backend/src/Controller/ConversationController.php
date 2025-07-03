@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use DateTimeImmutable;
 
 final class ConversationController extends AbstractController
@@ -20,7 +22,8 @@ final class ConversationController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         UserRepository $userRepo,
-        ConversationRepository $conversationRepo
+        ConversationRepository $conversationRepo,
+        NormalizerInterface $normalizer,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $receiverId = $data['receiver_id'] ?? null;
@@ -38,7 +41,14 @@ final class ConversationController extends AbstractController
         // Check if conversation already exists
         $existingConversation = $conversationRepo->findExistingConversationBetween($currentUser, $receiver);
         if ($existingConversation) {
-            return $this->json(['conversation_id' => $existingConversation->getId()], 200);
+            $normalizedData = $normalizer->normalize($existingConversation, null, [
+                'groups' => ['conversation:read']
+            ]);
+
+            return new JsonResponse([
+                'message' => 'this is your existing conversation',
+                'Existing conversation' => $normalizedData
+            ], 200);
         }
 
         $conversation = new Conversation();
@@ -50,12 +60,39 @@ final class ConversationController extends AbstractController
         $em->persist($conversation);
         $em->flush();
          
-        return $this->json([
-            'conversation_id' => $conversation->getId(),
-            'conversation_created_at' => $conversation->getCreatedAt(),
-            'conversation_name' => $conversation->getName(),
-            'conversation_users' => $conversation->getUsers(),
-            ]
-        , 201);
+        $normalizedData = $normalizer->normalize($conversation, null, [
+                'groups' => ['conversation:read']
+            ]);
+
+            return new JsonResponse([
+                'message' => 'Created a new conversation',
+                'Conversation' => $normalizedData
+            ], 201);
     }
+
+//---------------------------------------------------------------------------------------------------
+#[Route('/api/conversations', name: 'get_user_conversations', methods: ['GET'])]
+public function getUserConversations(): JsonResponse
+{
+    /** @var \App\Entity\User $user */
+    $user = $this->getUser();
+
+    $conversations = $user->getConversations(); // Assuming mappedBy="users" exists
+    // dd($conversations);
+
+    $data = [];
+
+    foreach ($conversations as $conv) {
+        $participantIds = array_map(fn($u) => $u->getId(), $conv->getUsers()->toArray());
+
+        $data[] = [
+            'id' => $conv->getId(),
+            'participants' => $participantIds,
+        ];
+    }
+
+    return $this->json($data);
+}
+
+    
 }

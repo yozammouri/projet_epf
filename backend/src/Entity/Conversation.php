@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ConversationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ConversationRepository::class)]
@@ -13,18 +14,22 @@ class Conversation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['conversation:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['conversation:read'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['conversation:read'])]
     private ?\DateTimeImmutable $created_at = null;
 
     /**
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'conversations')]
+    #[Groups(['conversation:read'])]
     private Collection $users;
 
     /**

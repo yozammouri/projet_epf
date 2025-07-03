@@ -21,19 +21,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['apprenant:read', 'coordinateur:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read', 'conversation:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['apprenant:read', 'coordinateur:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read', 'conversation:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['apprenant:read', 'coordinateur:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read', 'conversation:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['apprenant:read', 'coordinateur:read'])]
+    #[Groups(['apprenant:read', 'coordinateur:read', 'conversation:read'])]
     private ?string $email = null;
 
     /**
@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Conversation>
      */
-    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'user')]
+    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'users')]
     private Collection $conversations;
 
     public function __construct()
