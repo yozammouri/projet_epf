@@ -20,6 +20,13 @@ export default async function () {
     const userId: number = session.user.id;
     const token: string = session.token;
     const coordinateurConnected = await getCoordinateurByUserId(userId, token)
+    let src = "";
+    if(coordinateurConnected.photo) {
+      src = `http://localhost/${coordinateurConnected.photo}`;
+    }
+    else{
+        src = "https://github.com/leerob.png";
+      }
     return (
         <>
             <header className="w-screen fixed top-0 left-1/2 -translate-x-1/2 flex justify-end items-center py-4 bg-violet-600 shadow-xs z-1">
@@ -59,7 +66,7 @@ export default async function () {
                             <DropdownMenuTrigger className='flex justify-center items-center'>
                                 {/* <img src={`http://localhost/${coordinateurConnected.photo}`} alt="settings_icon" className='w-[27px] h-[25px] rounded-full object-contain hover:cursor-pointer hover:bg-violet-700' /> */}
                                 <Avatar>
-                                    <AvatarImage className='hover:cursor-pointer hover:bg-violet-700 object-cover' src={`http://localhost/${coordinateurConnected.photo}`} alt="@shadcn" />
+                                    <AvatarImage className='hover:cursor-pointer hover:bg-violet-700 object-cover' src={src} alt="@leerob" />
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>

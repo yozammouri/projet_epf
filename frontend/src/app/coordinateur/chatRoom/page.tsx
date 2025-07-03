@@ -1,10 +1,10 @@
 import { auth } from '@/auth';
 import ChatBox from '../../../components/reusable/chatBox';
+import ChatWrapper from '@/components/reusable/chatWrapper';
 // import MercureSubscriber from '@/components/reusable/componentSubscriber';
 
 export default async function page() {
   const session = await auth()
-  // const token = session?.token;
   if (!session?.user.roles.includes("ROLE_COORDINATEUR")) {
     return (
       <div className='flex justify-center items-center h-screen'>
@@ -12,10 +12,12 @@ export default async function page() {
       </div>
     )
   }
+  const token = session.token;
   return (
-    <div className="max-w-2xl mx-auto p-4 h-[80vh] flex flex-col">
-      <ChatBox session={session} receiverId={2} />
-      {/* <MercureSubscriber session={session} receiverId={2} /> */}
+    <div className="p-4 flex w-full items-center font-bold">
+      {/* <ChatBox session={session} receiverId={2} /> */}
+      <ChatWrapper session={session} token={token} />
+      {/* HELLO THIS IS THE CHAT ROOM */}
     </div>
   );
 }

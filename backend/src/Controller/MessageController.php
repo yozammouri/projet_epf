@@ -30,6 +30,7 @@ final class MessageController extends AbstractController
     $data = json_decode($request->getContent(), true);
         $content = $data['content'] ?? null;
         $conversationId = $data['conversation_id'] ?? null;
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
         if (!$user || !$content || !$conversationId) {
@@ -50,14 +51,14 @@ final class MessageController extends AbstractController
         $em->persist($message);
         $em->flush();
 
-    $topic = '/'.$message->getConversation()->getName();
+    $topic = '/conversation/'.$message->getConversation()->getId();
 
     $update = new Update(
         $topic,
         json_encode([
             'id' => $message->getId(),
-            'sender_id' => $message->getSender()->getId(),
-            'content' => $message->getContent(),
+            'sender_id' => $user->getId(),
+            'content' => $content,
             'createdAt' => $message->getCreatedAt()->format('c'),
         ])
     );
@@ -68,7 +69,10 @@ final class MessageController extends AbstractController
     return new JsonResponse([
         'status' => 'Message sent',
         'topic' => $topic,
-        'message_id' => $message->getId()
+        'message_id' => $message->getId(),
+        'sender_id' => $user->getId(),
+        'content' => $content,
+        'createdAt' => $message->getCreatedAt()->format('c'),
     ], 201);
 }
 
@@ -97,14 +101,7 @@ public function getMessages(
     return $this->json($messages);
 }
 
-
-
-
-
-
-
-
-
+//---------------------------------------------------------------------------------------------------
 
 #[Route('/api/publish', name: 'api_message_test')]
     public function publish(

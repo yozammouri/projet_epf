@@ -10,10 +10,16 @@ import {
 import { Button } from '../ui/button';
 
 export default async function ApprenantItem({ apprenant }: { apprenant: Apprenant }) {
-       const session = await auth();
+    const session = await auth();
+    let src= ""
     if(session?.user.roles.includes("ROLE_COORDINATEUR")) { 
       // const apprenant = await getApprenantById(params.id_apprenant, session.token);
-    
+    if(apprenant.photo) {
+      src = `http://localhost/${apprenant.photo}`;
+    }
+    else{
+        src = "https://github.com/leerob.png";
+      }
       return (
         <div className="w-full mx-auto">
           <li key={apprenant.id_apprenant} className="grid grid-cols-4 items-center py-5 border-b">
@@ -22,7 +28,7 @@ export default async function ApprenantItem({ apprenant }: { apprenant: Apprenan
             <div className="flex items-center justify-evenly gap-2">
               {/* <img alt="" src="../../favicon.ico" className="w-6 h-6 rounded-full bg-gray-50" /> */}
               <Avatar>
-              <AvatarImage src="https://github.com/leerob.png" alt="@leerob" />
+              <AvatarImage src= {src} alt="@leerob" />
               <AvatarFallback>LR</AvatarFallback>
               </Avatar>
               <div>

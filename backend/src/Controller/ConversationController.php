@@ -47,7 +47,7 @@ final class ConversationController extends AbstractController
 
             return new JsonResponse([
                 'message' => 'this is your existing conversation',
-                'Existing conversation' => $normalizedData
+                'conversation' => $normalizedData
             ], 200);
         }
 
@@ -66,7 +66,7 @@ final class ConversationController extends AbstractController
 
             return new JsonResponse([
                 'message' => 'Created a new conversation',
-                'Conversation' => $normalizedData
+                $normalizedData
             ], 201);
     }
 
