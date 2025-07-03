@@ -66,7 +66,7 @@ final class ConversationController extends AbstractController
 
             return new JsonResponse([
                 'message' => 'Created a new conversation',
-                $normalizedData
+                'conversation' => $normalizedData
             ], 201);
     }
 

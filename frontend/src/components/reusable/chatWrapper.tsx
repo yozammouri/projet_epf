@@ -21,7 +21,7 @@ export default function ChatWrapper({ session, token }: { session: any, token: s
         name: "RANDOM_NAME"
        }),
     });
-    console.log("receiver_id",receiverId)
+    // console.log("receiver_id",receiverId)
     
     if(!res.ok) {
       const error = await res.text()
