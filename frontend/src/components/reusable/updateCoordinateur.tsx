@@ -68,11 +68,8 @@ export default function CoordinatorForm({
       if (!res.ok) {
         const text = await res.text();
         console.error("Error response from backend:", text);
-        // alert("Something went wrong");
         toast.error("Something went wrong !❌")
       }
-      
-      // alert("Profile updated successfully");
       toast.success(`Updated successfully !✅`);
       router.refresh();
     } catch (err) {

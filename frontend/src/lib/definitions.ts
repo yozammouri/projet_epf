@@ -87,19 +87,19 @@ export const registerSchema = z.object({
 
 
 
-const namePattern = /^[^\d][\p{L}\p{M}\s'-]{1,}$/u;
+const namePatternn = /^[^\d][\p{L}\p{M}\s'-]{1,}$/u;
 export const updateCoordinateurSchema = z.object({
   nom: z
     .string()
     .min(2, "Le nom doit comporter au moins 2 caractères")
     .max(255, "Le nom doit comporter au maximum 255 caractères")
-    .regex(namePattern, "Le nom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+    .regex(namePatternn, "Le nom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
   
   prenom: z
     .string()
     .min(2, "Le prénom doit comporter au moins 2 caractères")
     .max(255, "Le prénom doit comporter au maximum 255 caractères")
-    .regex(namePattern, "Le prénom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+    .regex(namePatternn, "Le prénom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
   username: z.string().email("Email invalide"),  
   adresse: z
     .string()
@@ -125,4 +125,67 @@ export const updateCoordinateurSchema = z.object({
       if (!file) return true;
       return ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
     }, "Format de fichier invalide (jpeg, png ou webp uniquement)"),  
+});
+
+
+
+const namePattern = /^(?!\d+$)[\p{L}\p{M}'’\-\s]+$/u;
+
+export const updateApprenantSchema = z.object({
+  nom: z
+    .string()
+    .min(2, "Le nom doit comporter au moins 2 caractères")
+    .max(255, "Le nom doit comporter au maximum 255 caractères")
+    .regex(namePatternn, "Le nom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres")
+    .optional(),
+  
+  prenom: z
+    .string()
+    .min(2, "Le prénom doit comporter au moins 2 caractères")
+    .max(255, "Le prénom doit comporter au maximum 255 caractères")
+    .regex(namePatternn, "Le prénom ne doit pas commencer par un chiffre ni contenir uniquement des chiffres")
+    .optional(),
+  username: z.string().email("Email invalide")
+  .optional(),
+  adresse: z
+    .string()
+    .max(255, "L'adresse doit comporter au maximum 255 caractères"),
+
+  date_naissance: z.date().optional(),
+
+  sexe: z
+    .string()
+    .max(255, "Le sexe doit comporter au maximum 255 caractères")
+    .min(1, "Le sexe est requis"),
+
+  nationnalite: z
+    .string()
+    .max(255, "La nationalité doit comporter au maximum 255 caractères")
+    .regex(namePattern, "La nationalité ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+
+  profession: z
+    .string()
+    .max(225, "La profession doit comporter au maximum 225 caractères")
+    .regex(namePattern, "La profession ne doit pas commencer par un chiffre ni contenir uniquement des chiffres"),
+
+  anne_experience: z
+    .number({ invalid_type_error: "Le nombre d'années d'expérience doit être un entier" })
+    .int("Le nombre d'années d'expérience doit être un entier")
+    .min(0, "Le nombre d'années d'expérience ne peut pas être négatif"),
+
+  dernier_diplome: z
+    .string()
+    .max(255, "Le dernier diplôme doit comporter au maximum 255 caractères"),
+
+  photo: z
+    .any()
+    .optional()
+    .refine((file) => {
+      if (!file) return true; // allow empty
+      return file instanceof File && file.size <= 5 * 1024 * 1024;
+    }, "Le fichier doit être une image valide et ne pas dépasser 5 Mo")
+    .refine((file) => {
+      if (!file) return true;
+      return ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+    }, "Format de fichier invalide (jpeg, png ou webp uniquement)"),
 });

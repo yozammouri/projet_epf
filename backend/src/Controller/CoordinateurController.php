@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\Coordinateur;
 use App\Entity\Formation;
 use App\Repository\CoordinateurRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+// use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -17,6 +20,15 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class CoordinateurController extends AbstractController
 {
+    #[Route('/test', name: 'test')]
+    public function test(CoordinateurRepository $coordinateurRepository): JsonResponse
+    {
+        // phpinfo();
+        $coordinateur= $coordinateurRepository->findAll();
+        return new JsonResponse($coordinateur);
+        // return new JsonResponse("HI");
+    }
+
     #[Route('/api/coordinateur/all', name: 'app_coordinateur')]
     public function index(Request $request,EntityManagerInterface $em): JsonResponse
     {
@@ -101,7 +113,7 @@ final class CoordinateurController extends AbstractController
     }
 
         #[Route('/api/coordinateur/update/{id}', name: 'update_coordinateur', methods: ['POST', 'PUT'])]
-        public function updateCoordinateur(int $id, Request $request, EntityManagerInterface $em,CoordinateurRepository $cr , SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
+        public function updateCoordinateur(int $id, Request $request, EntityManagerInterface $em, CoordinateurRepository $cr, UserRepository $ur,SerializerInterface $serializer, SluggerInterface $slugger): JsonResponse
         {
             // $coordinateur = $cr->find($id);
             // if (!$coordinateur) {
@@ -119,7 +131,7 @@ final class CoordinateurController extends AbstractController
             // $em->flush();
 
             // return new JsonResponse(['message' => 'Coordinateur updated'], 200);
-
+            
             $coordinateur = $cr->find($id);
 
             if (!$coordinateur) {
@@ -129,6 +141,18 @@ final class CoordinateurController extends AbstractController
             // 🔁 1. Manually get raw fields from the request
             $data = $request->request->all();
 
+            $user = $coordinateur->getUser();
+
+            if (isset($data['nom'])) {
+                $user->setNom($data['nom']);
+            }
+            if (isset($data['prenom'])) {
+                $user->setPrenom($data['prenom']);
+            }
+            if (isset($data['email'])) {
+                $user->setEmail($data['email']);
+            }
+
             // 🔁 2. Use serializer to update the entity (only text fields)
             $serializer->deserialize(
                 json_encode($data),
@@ -136,6 +160,7 @@ final class CoordinateurController extends AbstractController
                 'json',
                 ['object_to_populate' => $coordinateur]
             );
+            
 
             // 📂 3. Handle file upload manually
             $file = $request->files->get('photo');
@@ -155,8 +180,12 @@ final class CoordinateurController extends AbstractController
 
             // 💾 4. Persist changes
             $em->flush();
-
-            return new JsonResponse(['message' => 'Coordinateur updated']);
+            
+            return new JsonResponse(
+                [
+                    'message' => 'Coordinateur updated',
+                    'Coordinateur_prenom' => $coordinateur->getUser()->getPrenom()
+                ]);
 
         }
 }

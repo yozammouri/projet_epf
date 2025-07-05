@@ -42,3 +42,18 @@ interface USER {
   prenom: string,
   email: string
 }
+
+interface Message {
+  id: number;
+  sender: number;
+  receiver: number;
+  content: string;
+  createdAt: string;
+}
+
+interface Conversation {
+  id: number;
+  name: string;
+  created_at: Date;
+  users: USER[];
+}

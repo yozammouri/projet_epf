@@ -13,15 +13,26 @@ RUN curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases
     chmod +x /usr/local/bin/install-php-extensions
 
 ## Install php ext : Better install with https://github.com/mlocati/docker-php-extension-installer
-RUN install-php-extensions  opcache-stable \
-                            redis-stable \
-                            intl-stable \
-                            zip-stable \
-                            pdo_pgsql-stable \
-                            pdo_mysql-stable && \
-    IPE_DONT_ENABLE=1 \
-    install-php-extensions  xdebug-stable && \
-    install-php-extensions  @composer
+# RUN install-php-extensions  opcache-stable \
+#                             redis-stable \
+#                             intl-stable \
+#                             zip-stable \
+#                             pdo_pgsql-stable \
+#                             pdo_mysql-stable && \
+#     IPE_DONT_ENABLE=1 \
+#     install-php-extensions  xdebug-stable && \
+#     install-php-extensions  @composer
+
+RUN install-php-extensions opcache-stable
+RUN install-php-extensions redis-stable
+# RUN install-php-extensions intl-stable
+RUN install-php-extensions zip-stable
+# RUN install-php-extensions pdo_pgsql-stable
+# RUN install-php-extensions pdo_mysql-stable
+RUN docker-php-ext-install pdo_mysql
+RUN IPE_DONT_ENABLE=1 install-php-extensions xdebug-stable
+RUN install-php-extensions @composer
+
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY docker/nginx.conf /etc/nginx/sites-enabled/default

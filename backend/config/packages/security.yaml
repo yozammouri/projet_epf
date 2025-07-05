@@ -46,6 +46,7 @@ security:
         - { path: ^/dashboard, roles: ROLE_COORDINATEUR}
         - { path: ^/api/apprenant,roles: ROLE_COORDINATEUR}
         - { path: ^/api/coordinateur,roles: ROLE_COORDINATEUR}
+        - { path: ^/api/conversations,roles: ROLE_COORDINATEUR}
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
