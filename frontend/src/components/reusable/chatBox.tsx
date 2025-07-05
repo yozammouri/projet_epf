@@ -136,11 +136,11 @@ export default function ChatBox({ conversationId, receiverId, session }: ChatBox
   }
 
   return (
-    <div className="mt-[100px] flex flex-col w-2/3 h-screen p-4">
+    <div className="mt-[100px] flex flex-col w-2/3 h-[800px] p-4">
       <h2 className="text-xl font-bold mb-4">Conversation #{conversationId}</h2>
 
       {/* Message List */}
-      <div className="flex-1 overflow-auto border rounded p-4 mb-4 bg-white">
+      <div className="flex-1 overflow-auto border rounded p-4 mb-4">
         {messages.length === 0 && <p className="text-gray-500">Aucun message</p>}
         <ul className="space-y-3 flex flex-col">
           {messages.map((msg) => {
